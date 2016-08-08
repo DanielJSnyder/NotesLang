@@ -1,0 +1,73 @@
+Image Classification: a core task in COmputer Vision
+	Given an image want to classify it based on a set of discrete labels
+	input: image
+	output: label(s)
+
+The problem: semantic gap
+	Images are rpresented as 3D arrays of numbers with integers between 0, 255
+	
+An image classifier
+	Unlike sorting a list of numbers
+	no obvious way to hard-code the algorithm for recognizing a cat or other classes
+
+Data driven approach:
+	1. Collect a dataset of images and label them
+	2. Use Machine Learning to tran an image classifier
+	3. Evalueate the classifier on a withheld set of test images
+
+First classifier: Nearest Neighbor Classifier
+	Remember all training iamges and their labels
+	Predict the label of the most similar training image
+	How do we compare the images? What is the \textbf{distance metric}?
+
+	L1 distance: d_1(I_1, I_2) = sum()()
+
+Aside: Approximate Nearest Neighbor
+	fidn approximate nearest neighbor
+
+The choice of distance is a hyperparameter
+	L1 (Manhattan) distance
+	L2 (Euclidean) distance
+
+k-Nearest neighbors
+	find the k nearest images and have them vote on the label
+
+Questions
+	What is the best \bf{distance} to use
+	what is the best value of \bf{k} to use
+	i.e. how do we set the \bf{hyperparameters}
+
+	No known method, each problem is different
+
+Ideas
+	Trying out what hyperparameters work best on test set
+		very bad idea. the test set is a proxy for the generalization of performance
+			artifically increasing performance of test images
+	Cross-validation
+		divide training data into 'folds' (divisions of data)
+		cycle through the choice of which fold is the validation fold, average results
+		\bf{Validation data}
+			use to tune hyper parameters evalue on test set ONCE at the end
+
+Recap:
+	Image classification: We are given a Training Set of labeled images, asked to predict labes on TestSet. Common to report the accuracy of the ...
+
+Nearest Neighbor classifier
+	Q: what is the complexity of the NN classifier w.r.t training set of N images and test set of M images
+		1. at training time? 
+			O(1)
+		2. at test time?
+			O(NM)
+
+Linear Classification
+	1. define a score function
+		f(x_i, W, b) = Wx_i + b
+
+		f = class scores [10 x 1]
+		W = weightx [10 x 3072]
+		x_i = data(image) [3072 x 1]
+		b = bias vector [10 x 1]
+	
+Interpreting a Linear Classifier
+	Linear classifiers define a line or hyper planes that partition the input space
+	Can 'fold' the bias into the weight matrix to eliminate its presence

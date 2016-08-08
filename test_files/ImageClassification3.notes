@@ -1,0 +1,45 @@
+Recap:
+	We  explored intuition about what the loss surfaces of linear classifiers look 
+	We introduced gradient descent as a way of optimizing loss functions, as well as batch gradient descent and SGD
+	Numerical Gradient: 
+		slow
+		approximate
+		easy to write
+	Analytical Gradient:
+		fast
+		exact
+		error-prone
+	In practice: Gradient check (but be careful)
+
+Brief aside: Image Features
+	In practice, very rare to see Computer Vision applications that train linear classifiers on pixel values
+	Will often train on features
+		Color histogram
+			Problem, can switch pixels around and histogram won't change
+		HOG Features
+			Histogram of Gradient
+				divide an image into 8 by 8 pixel regions
+				quantize edge orientation into 9 bins
+			immune to shifts by a constant
+			small amount of invariance to shifts (very small)
+			Problem: feature dimension depends on image size
+		Bag of Words
+			Builds on top of HOG
+				Use hog like representation on only small patches
+			1. Resize patch to a fixed size
+			2. Extract HOG on the patch
+			3. Repeat for each detected feature
+			Problem: different images will have different numbers of features
+				need fixed-sized vectors for linear classification
+			Do quantization
+				extract visual word vectors for each image
+				learn k-means centroids vocabulary of visual words
+				get histogram of visual words
+
+			Works better than pixel values: due to having some invariants
+				Can handle illumination shifts
+				Computing the histogram w/ k-Means adds more invariants to shifting
+				If you scramble the image, as long as the local patches are untouched, the image remains the same bag of words
+
+Recap:
+	In practice if you are training a linear classifier, you use image features, rather than pixel values

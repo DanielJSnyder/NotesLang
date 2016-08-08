@@ -1,0 +1,138 @@
+Linear Classificaiton
+	1. define a score function
+		convert input image to class scores
+			f(x_i, W, b) = Wx_i + b
+		Score rpresents how likely it is to be a cat, or a dog or a ship, etc.
+
+Interpreting a Linear classifier
+	As a template
+		Comparing the image to a template
+			if its close you get a big score, else you get a small score or a negative one
+	As a hyperplane separating the feature points
+		Wx_i + b seems like a "generalized line"
+
+Bias trick
+	f(x_i, W, b) -> f(x_i, W) = Wx_i
+		you augment your W matrix to "fold in" your bias vector
+
+LInear Classification
+	2. Define a loss function
+		also known as a cost funciton or objective
+		scores, label -> loss
+			f(x_i, W) y_i -> L_i
+
+Defining a loss function
+	One of the many ways to do it: Multiclass SVM Loss
+	L_i = sum(j!=y_i)(max(0,f(x_i, W)_j - f(x_i, W)_{y_i} + \delta))
+		L_i = loss due to example i
+		sum = summ over all the incorrect labels
+		f_j - f_{y_i} = difference between the correct class score and the incorrect class score
+			incorrect label = f_j
+			correct label = f_{y_i}
+				want a small score as a large score means we are assigning a bit score to the incorrect class
+				take max(0, number) as your loss can never be negative
+
+		delta = positive term
+			it is not enough  for the correct_label to be slightly bigger than the incorrect label, it should be at least delta larger to give a loss of zero
+
+Bug with current objective
+	This version doesn't quite work
+	Use L2 Regularization
+		L = \frac{1}{N} sum(i)(loss_function + \lambda R(W))
+		
+		\lambda R(W) = Regularization strength
+			R(W) = sum(k)(sum(l)(...))
+
+So far
+	1. score function
+	2. Loss funciton (multiclass SVM Loss)
+
+Softmax classifier
+	Score function is the same
+	Different loss funciton
+		L_i = -log(\frac{e^{f_{y_i}} / sum(j)(e^{f_j}))
+		P(y_i | x_i; W)
+			minimizing negative log likelihood
+
+Recap
+	we introduced a \bf{parametric approach} to image classificaiton
+	We defined a score function (linear map)
+	We defined a loss function(SV/SoftMax)
+
+	Still a problem: how do we find W, b
+		Issue known as optimization
+
+Optimization
+	Follow the gradient
+		In a 1-dimension, the derivative of a function exists
+		In multiple dimensions, the gradient is the vector of partial derivatives
+
+Numerical gradient
+	can approx derivate by (f(x-h) - f(x+h))/2h
+
+	Issues
+		it is an approximation
+		very slow to evaluate the function twice as is needed
+
+Better way: calculus
+	derive the gradient by hand
+
+In summary:
+	Numerical gradient: approximate, slow, easy to write
+	Analytical gradient: exact, fast, error-prone
+
+	In practice: Always use analytic gradient, but check implementation with numerical gradient. This is called a gradient check.
+
+
+Relating gradient to getting the weights
+	while True: 
+		weight_grad = eval gradient (loss_fun, data, weights)
+		weights += 0step_size * weights_grad
+
+Mini-batch Gradient Descent
+	only use a small portion of the training set to compute the gradient.
+
+	code:
+		while True:
+			data_batch = sample_training_data(data, 256)
+			weights_grad = evaluate_gradient(losss_fun, data_batch, weights)
+			weights += -step_size * weights_grad
+
+
+
+
+Eureka: Picking weights so as to minimize the loss function of the training data
+
+
+
+Stochastic Gradient descent
+	rather than sample a batch of data, sample only a single one at a time
+
+Minibatch results
+	You actually perform better on mini-batch than you do on using the whole set
+		get to destination faster
+
+Fun Question:
+	Suppose you were training with mini-batch size of 100, and now you switch to minibatch size of 1.  Your learning rate (step size) should?
+	options:
+		increase
+		decrease
+		stay the same
+		become zero
+	Answer:
+		stay the same:  since \alpha is the learning rate, and you normalize the gradient with n, you don't need to change \alpha
+
+
+Gradient descent dynamics:
+	SOft max always pulls it one way (figure this out)
+	SVM will always pull it one way (figure this out)
+
+Momentum Update
+	code:
+		weights_grad = eval_gradient(loss_fun, data, weights)
+		vel = vel *0.9 - step_size * weights_grad
+		weights += vel
+
+	Idea:
+		with certain loss functions you could "zig-zag" as you step along the gradient
+		Rahter than just zig-zag, take into account past points and preserve your "momentum" along the path, reducing jittering

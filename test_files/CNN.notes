@@ -1,0 +1,68 @@
+Before
+	conventional neural network
+		each layer is one column of nodes
+Now
+	Convolutional Neural Network
+		each layer is a cube of nodes (3 dimensions)
+		all neural net activations within 3 dimensions
+
+CNNs
+	just like regualr NN's but
+		1. \bf{Local connectivity}
+			ex: 32x32x3 volume
+			before: full connectivity each node has 32x32x3 weights
+			now: one neuron will tonnect to say 5x5x3 chunk and has only 5x5x3 weights
+			connectivity is
+				local in space
+				full in depth
+		Depth dimension now has multiple nodes
+			each node in a depth column look at the same inputs, but have different weights and biases
+
+	Connectivity
+		Replicate this column of hidden neurons across space with some stride
+			stride is the amount that you move in the prior layer when you move one depth column side ways
+			ex:	7x7 input
+				assume 3x3 connectivity
+				1 stride = 5x5 output
+			Formula based on stride
+				(N-F)/stride + 1 = output_size
+					(N-F)/stride must be an integer
+					N = image size (for square image)
+					F = size of receptive field (size of the local spacial connectivity (3 in ex))
+
+		In practice: common to zero pad the border
+			allows you to preserve initial input size
+			called "same convolution" 
+				perserves size
+				No headaches when sizing architectures
+				works well
+		Other approach
+			Valid convolution ( shrinks size)
+				Headaches when sizing the full architecture
+				Works worse: Boarder information will "wash away" since those values are used only once in the forward function
+
+
+	One more problem:
+		assume input 32x32x3
+		30 neurons with receptive fields 5x5, applied at stride 1/pad 1:
+			output volume: 32x32x30  (30720 neurons)
+			each neuron has 5x5x3 (75 weights)
+				total number of weights per layer \approx 3 million...
+		Idea: Don't learn the same thing across all spatial locations
+			parameter sharing
+				for each 2d cross section of nodes in the depth, have the same weights 
+				i.e. have a cross section of nodes that activate when they see a face
+					the entire cross section convolves with the same filter
+			Reduces number of weights as weights only change along depth
+				in ex 30*75 weights = 2250 weights per layer
+		Not always the best to share the weights
+			ex faces: eyes only appear in one place, so don't need to detect eyes everywhere
+
+Side Notes on CNNS
+	can call the neurons "filters
+	can call the layer convolutional because it is related to a convolution of two signals (kind of)
+
+
+In ConvNet architectures, Conv layers are often followed by Pool layers
+	convenience layer: makes the representations smaller and more manageable without losing too much informaiton. Computes MAX operation (most common)
+

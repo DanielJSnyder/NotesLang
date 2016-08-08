@@ -1,0 +1,101 @@
+Feature Descriptors
+	Simplest descriptor: vector of raw intensity values
+	How to compare such vectors?
+		Sum of squared differences (SSD)
+			SSD(u,v) = SUM(i)(u_i - v_i)^2
+			- not invariant to intensity change
+
+		Normalized correlation
+			see slides for intensity change
+
+Disadvantage of intensity vectors as descriptors
+	small deformations can affect the matching score a lot
+
+Feature Descriptors: SIFT
+	Descritpor computation
+		Divide patch into 4x4 sub-patches
+		Compute histogram of gradient orientations (8 reference angles) inside each sub-patch
+		Resulting descriptor: 4x4x8 = 128 dimensions
+
+	Advantage over raw vectors of pixel values
+		Gradients less sensitive to illumination change
+		Pooling of gradients over the sub-patches achieves robustness to small shifts, but still preserves some spatial information.
+		can be made rotationally invariant by identifying dominant gradient
+
+Feature Matching
+	Generating \textit{putative matches}: for each patch in one image, find a short list of patches in the other image that could match it based solely on appearance
+
+Problem: Ambiguous putative matches
+	example of the fence.
+		The tops of a single fence post could match the tops of any of the fence posts
+		can't look at just one post, must consider the entire pattern?
+
+Rejection of unreliable matches
+	How can we tell which putative matches are more reliable
+	Heuristic: compare distance of nearest neighbor to that of second nearest neighbor
+		Ratio of closest distance to second-closest distance will be high for features that are not distinctive
+		Idea: its close, but its closer than anyone else is
+
+RANSAC
+	The set of putative matches contains a very high percentage of outliers
+	RANSAC loop:
+		1. Randomly select a \textit{seed group} of matches\
+		2. Compute transformation from seed group
+		3. Find \textit{inliers} to this transformation
+		4. If the number of inliers is sufficiently large, re-compute least-squares estimate of transformation on all of the inliers
+	keep the transformation with the largest number of inliers
+
+RANSAC example : translation
+	select one match, count inliers
+		translation is a shift along 1 direction , so one match is sufficient
+
+Scalability: Alignment to large databases
+	What if we need to align a test image with tousands or millions of images in a model database?
+	Question: can you match an image to an image in a test database, ie. searching for a product.
+	Idea1: Try to align an image to each image in the database
+		Would work always, but is a brute force method
+		How do we do this efficiently
+
+	Efficient putative amtch generation
+		approximate descriptor similarity search, inverted indices
+
+Large scale visual search
+	create an index (what google does)
+		have a set of words, each word has a set of documents containing that word
+		return the documents containing those words
+
+Example indexing technique: Vocabulary trees
+	Have descriptor space
+		for example your 128 dimension space of SIFT descriptors
+	Goal: find a set of representative prototypes or cluster centers to which descriptors can be quantized.
+		All points that are closest to that prototype are considered to be in a group with that protoype
+		Each point is now described by which cluster it belongs to rather than by what they actually are
+		K-Means clustering
+
+K-Means Clustering
+	Want to minimze sum of squared Euclidean distances between points x_i and their nearest cluster centers m_k
+
+		D(X, M) = sum(cluster k)(sum(point i in cluster k)(x_i - m_k)^2)
+
+	Algorithm to find where you should put the cluster centers
+
+	Algorithm:
+		Randomly intialize K cluster centers
+		Iterate until convergence:
+			Assign each data point to the nearest center
+			Recompute each cluster center as the mean of all points assigned to it
+
+Heirarchical method
+	create 3 'bins'
+		within each of those 3 bins, create 3 more 'bins'
+	Gives a tree structure
+		top level single cluster is root of tree
+		3 bins are children of root
+		bins within bins are children of children
+
+Using this
+	Each feature point goes to a specific child of the tree
+		'within this cluster, what smaller cluster do i belong to?'
+	Use a tree to classify the structure as it is more efficient to do so than it is to try and do a linear search to find which bin a feature fits in.
+	To find the matching image, count the number of each image in bins that the various features of the test image fall into.  
+	The image with the most matching features is the one that matches the image the best

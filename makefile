@@ -1,2 +1,2 @@
-all release debug:
+all release debug clean:
 	$(MAKE) $@ -C src

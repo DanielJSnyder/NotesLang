@@ -1,0 +1,14 @@
+Top level diagram
+
+Driver -(char * dot_notesfile) -> Parser
+Parser parses the file and stores its output internally
+Driver calls the parser with the file to write to.
+
+
+Possible Algorithms for parsing
+
+1. Build the text file as a string in parser
+	- Store the tags you've opened using a stack
+
+2. Build it in a output stream (string stream) which you then can just output easier
+	- Possibly more efficient because it prevents inserting more characters

@@ -8,18 +8,14 @@ using namespace std;
 int main(int argc, char ** argv)
 {
 	//assumption argv is just the file name being parsed
-	if(argc != 2)
+	if(argc != 3)
 	{
-		cerr << "Incorrect arguments" << endl;
+		cerr << "Incorrect arguments: Correct usage ''./notesGen <InputFileName> <OutputFileName>''" << endl;
 		exit(1);
 	}
 
-	//ifstream notes_filestream(argv[1]);
-	
-	//create the output file
-	string output_filename = utils::createOutputFileName(argv[1]);
-	cout << output_filename << endl;
+	NotesParser parser;
 
-	//parse the file
-	core::generateTexFile(argv[1], output_filename);
+	//parse the file and write
+	parser.generateTexFile(argv[1], argv[2]);
 }

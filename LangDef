@@ -1,0 +1,8 @@
+Sections are defined using a: after the line
+	The whole line is then taken as the section name
+	The type of section (section/subsection/subsubsection/etc.) is the level of indent
+	A section resets the level of the current bullet point 
+
+Lines that are not sections are considered part of a bullet point or numbered list
+
+Level of the list is determined by the indent relative to first list in the current section/subsection

@@ -1,16 +1,19 @@
-#ifndef __SIMP_LATEX_PARSER_HPP__
-#define __SIMP_LATEX_PARSER_HPP__
+#ifndef __NOTES_PARSER_HPP__
+#define __NOTES_PARSER_HPP__
 
-#include <string>
 #include <iostream>
-#include <fstream>
+#include <string>
 
-const char DEFAULT_TEX_HEADER [] = 
-	"\\documentclass [11pt] {article}\n\\begin{document}\n\n";
-
-namespace core 
+class NotesParser
 {
-void generateTexFile(const char * input_filename, const std::string & output_filename);
-void createTexHeader(std::ofstream & output_file, const std::string & filename);
-}
+const std::string DEFAULT_TEX_HEADER = 
+	"\\documentclass [11pt] {article}\n\\begin{document}\n\n";
+public:
+	NotesParser();
+
+	void generateTexFile(const char * input_fname, const char * output_fname);
+private:
+	void createHeader(std::ostream & os, const std::string & filename);
+	void generateFooter(std::ostream & os);
+};
 #endif
